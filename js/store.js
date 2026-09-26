@@ -1,9 +1,15 @@
 // 学習データの保存（localStorage）
+import { BUILTIN_AI } from './config.js';
+
 const KEY = 'eiken3-passport-v1';
+
+// アプリ内蔵の AI（中継サーバー経由・キー不要）。URL などは毎回 config.js の値を使う
+const builtinProvider = (on = true) => ({ id: 'builtin', builtin: true, name: BUILTIN_AI.name, baseUrl: BUILTIN_AI.baseUrl, key: '', model: BUILTIN_AI.model, on, mergeSystem: false });
 
 export const DEFAULT_AI = {
   cache: true,          // 同じ質問への回答は端末に保存して再利用（クレジット節約）
   providers: [
+    builtinProvider(),
     { id: 'self', name: '自前サーバー（Gemma など）', baseUrl: '', key: '', model: '', on: false, mergeSystem: false },
     { id: 'free', name: '無料 LLM（OpenAI互換）', baseUrl: '', key: '', model: '', on: false, mergeSystem: false },
     { id: 'openrouter', name: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1', key: '', model: 'google/gemini-2.5-flash-lite', on: false, mergeSystem: false },
@@ -72,6 +78,9 @@ function merge(d) {
     ...(ai.providers || []).map((p) => ({ ...(DEFAULT_AI.providers.find((x) => x.id === p.id) || {}), ...p })),
     ...DEFAULT_AI.providers.filter((p) => !have.has(p.id)).map((p) => ({ ...p })),
   ];
+  // 内蔵 AI はいつも先頭に置き、URL・モデルは config.js の値に合わせる（オン・オフだけ利用者が決める）
+  const bi = s.settings.ai.providers.find((p) => p.id === 'builtin');
+  s.settings.ai.providers = [builtinProvider(bi ? bi.on !== false : true), ...s.settings.ai.providers.filter((p) => p.id !== 'builtin')];
   s.recent = { ...base.recent, ...(d.recent || {}) };
   return s;
 }

@@ -1011,6 +1011,8 @@ textarea.text-in { line-height: 1.6; }
 .provider-list { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
 .provider { border: 2px solid var(--line); border-radius: 18px; padding: 12px 14px; background: var(--card-2); }
 .provider.on { border-color: var(--mint); }
+.provider.builtin { background: linear-gradient(135deg, var(--sky-soft), var(--mint-soft)); }
+.provider.builtin .pv-name { flex: 1; }
 .pv-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .pv-name { font-weight: 800; flex: 1; min-height: 38px; }
 .pv-order { display: flex; gap: 4px; }

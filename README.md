@@ -35,27 +35,41 @@
 > 学習記録は端末のブラウザ内（localStorage / IndexedDB）に保存されます。Safari の「履歴と Web サイトデータを消去」で消えるため、
 > 設定画面の「バックアップを保存」でときどき書き出してください（API キーはバックアップに含まれません）。
 
-## AI の設定（クレジットを節約するしくみ）
+## AI の設定
 
-設定 →「AI」で、OpenAI 互換の接続先を**上から順に**登録します。上のものが失敗したときだけ次に進むので、
-無料・自前のサーバーを上に、OpenRouter を最後に置くと、有料のクレジットは必要なときだけ使われます。
+### アプリ内蔵AI（利用者の設定は不要）
+
+アプリには **Modellix の LLM（`deepseek/deepseek-v4-flash`）** があらかじめ組み込まれていて、利用者は何も設定せずに
+「AIにくわしく聞く」「AI添削」「AIで採点」「AIで問題を作る」を使えます。
+
+```
+アプリ（GitHub Pages）→ AI 中継（Cloudflare Worker：proxy/）→ Modellix LLM
+```
+
+- Modellix の API はブラウザから直接呼べない（CORS 非対応）ので、`proxy/` の Cloudflare Worker が中継します
+- **API キーは Cloudflare の Secret にだけ保存**し、アプリのコードや GitHub には入れません
+- 中継サーバーでは、許可したサイトからの呼び出しだけを受け付けます。モデルと出力トークン数も固定し、IP ごとの回数制限（1分12回）をかけています
+- 接続先は `js/config.js` の `BUILTIN_AI`（Worker の URL＋`/v1` とモデル名）で指定します
+- 公開・キー登録・設定の変更は [proxy/README.md](proxy/README.md) を参照してください
+- 目安の料金：英作文の添削1回（入力約1,500・出力約800トークン）で約 0.2 円（DeepSeek V4 Flash：入力 $0.40・出力 $1.19／100万トークン）
+
+### クレジットを節約するしくみ
+
+- **回答の保存**：同じ問題・同じ答案への回答は IndexedDB に保存し、2回目からは AI を呼びません
+- **AI なしでも動く**：解説（全問に日本語解説つき）・英作文の自動チェック・面接の自動採点はすべて端末内で動きます。AI を使うのはボタンを押したときだけです
+- **出力を短く**：採点は JSON で返させ、小さなモデルでも安定するようにしています
+
+### 自分の AI を追加する（任意）
+
+設定 →「AI」で、内蔵AIの下に OpenAI 互換の接続先を追加できます（上から順に試し、失敗したら次へ）。
 
 | 接続先 | URL の例 | モデルの例 |
 |---|---|---|
 | 自前サーバー（Oracle Cloud の Gemma など） | `https://your-server/v1` | `gemma3:12b` |
-| 無料 LLM（OpenAI 互換） | 各サービスの `/v1` | 各サービスのモデル名 |
-| OpenRouter | `https://openrouter.ai/api/v1` | `google/gemini-2.5-flash-lite` など（「モデル一覧」で料金つきの一覧を取得、`:free` のモデルも選べる） |
+| OpenRouter | `https://openrouter.ai/api/v1` | 「モデル一覧」で料金つきの一覧を取得 |
 
-AI を使わなくても、解説（全問に日本語解説つき）・英作文の自動チェック・面接の自動採点はすべて端末内で動きます。
-AI を使うのは「AIにくわしく聞く」「AI添削」「AIで採点」「AIで問題を作る」を押したときだけです。
-
-- **回答の保存**：同じ問題・同じ答案への回答は IndexedDB に保存し、2回目からは AI を呼びません
-- **出力を短く**：採点は JSON で返させ、小さなモデル（Gemma など）でも安定するようにしています
-- **自前サーバーをつなぐ注意**
-  - アプリを HTTPS で公開している場合、AI サーバーも HTTPS が必要（Cloudflare Tunnel や Caddy などで HTTPS 化）
-  - ブラウザから直接呼ぶので CORS の許可が必要（Ollama なら `OLLAMA_ORIGINS=*` を設定して再起動）
-  - system メッセージでエラーになるモデルは「system を使わない」にチェック
-- 今月の利用回数・トークン数（OpenRouter なら概算料金も）は設定と記録の画面に表示されます
+自前サーバーを使うときは、HTTPS 化と CORS の許可（Ollama なら `OLLAMA_ORIGINS`）が必要です。
+自分で登録した API キーはその端末の中だけに保存され、バックアップファイルには含まれません。
 
 ## 手書き判定のしくみ
 
@@ -96,6 +110,8 @@ js/recognizer.js   手書き認識（Google／オフライン $P）  js/letters.
 js/spell.js        つづり入力（1マス1文字・1行・キーボード）と判定
 js/speech.js       読み上げ・音声認識・音読の照合
 js/ai.js           AI 接続（OpenAI 互換・フォールバック・キャッシュ・利用量）  js/prompts.js  指示文
+js/config.js       アプリ内蔵AIの接続先（中継サーバーの URL・モデル）
+proxy/             AI 中継サーバー（Cloudflare Worker）
 js/wcheck.js       英作文の自動チェック
 js/scenes.js       面接カードのイラスト（SVG）
 js/predict.js      合格予測（CSE の目安）

@@ -66,14 +66,23 @@ export function renderSettings(root, params) {
 
       <div class="card set-group" id="sec-ai">
         <h2>🤖 AI（解説・添削・面接の採点）</h2>
-        <p class="small">OpenAI 互換の API に対応しています。<b>上から順に試し、失敗したら次へ</b>進みます。無料・自前のサーバーを上に置くと、クレジットを使うのはそれが使えないときだけになります。</p>
+        <p class="small">いちばん上の<b>アプリ内蔵AI</b>は設定なしで使えます。自分の AI を使いたいときは下に登録してください（OpenAI 互換）。<b>上から順に試し、失敗したら次へ</b>進みます。</p>
         <div class="provider-list">
-          ${ai.providers.map((p, i) => `
+          ${ai.providers.map((p, i) => p.builtin ? `
+          <div class="provider builtin ${p.on ? 'on' : ''}" data-i="${i}">
+            <div class="pv-head">
+              <button type="button" class="toggle ${p.on ? 'on' : ''}" data-action="pv-toggle" data-i="${i}" role="switch" aria-checked="${p.on}"><i></i></button>
+              <b class="pv-name">🦉 ${esc(p.name)}</b>
+              <span class="tag">${p.baseUrl ? '設定済み・APIキー不要' : '準備中'}</span>
+            </div>
+            <p class="small muted">${p.baseUrl ? `モデル：${esc(p.model)}。アプリの作者が用意した AI です。回答は端末に保存され、同じ質問では再利用されます。` : 'アプリの作者が中継サーバーを準備中です。'}</p>
+            ${p.baseUrl ? `<div class="pv-actions"><button class="mini-btn" data-action="pv-test" data-i="${i}">接続テスト</button><span class="pv-out small" data-out="${i}"></span></div>` : ''}
+          </div>` : `
           <div class="provider ${p.on ? 'on' : ''}" data-i="${i}">
             <div class="pv-head">
               <button type="button" class="toggle ${p.on ? 'on' : ''}" data-action="pv-toggle" data-i="${i}" role="switch" aria-checked="${p.on}"><i></i></button>
               <input class="text-in pv-name" data-pv="name" data-i="${i}" value="${esc(p.name)}">
-              <span class="pv-order"><button class="mini-btn" data-action="pv-up" data-i="${i}" ${i ? '' : 'disabled'} aria-label="上へ">▲</button><button class="mini-btn" data-action="pv-down" data-i="${i}" ${i < ai.providers.length - 1 ? '' : 'disabled'} aria-label="下へ">▼</button></span>
+              <span class="pv-order"><button class="mini-btn" data-action="pv-up" data-i="${i}" ${i > (ai.providers[0]?.builtin ? 1 : 0) ? '' : 'disabled'} aria-label="上へ">▲</button><button class="mini-btn" data-action="pv-down" data-i="${i}" ${i < ai.providers.length - 1 ? '' : 'disabled'} aria-label="下へ">▼</button></span>
             </div>
             <label class="pv-row"><span>URL</span><input class="text-in" data-pv="baseUrl" data-i="${i}" value="${esc(p.baseUrl)}" placeholder="https://…/v1" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
             <label class="pv-row"><span>API キー</span><input class="text-in" type="password" data-pv="key" data-i="${i}" value="${esc(p.key)}" placeholder="（自前サーバーは空でも可）" autocomplete="off"></label>

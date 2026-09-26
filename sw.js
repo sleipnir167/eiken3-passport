@@ -1,11 +1,11 @@
 // Service Worker：アプリ本体をキャッシュしてオフラインでも使えるようにする
-const VERSION = 'eiken3-passport-v1';
+const VERSION = 'eiken3-passport-v2';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './css/style.css',
   './js/app.js', './js/store.js', './js/srs.js', './js/sound.js', './js/fx.js', './js/ui.js', './js/game.js',
   './js/mascot.js', './js/speech.js', './js/pad.js', './js/letters.js', './js/recognizer.js', './js/spell.js',
   './js/kv.js', './js/ai.js', './js/prompts.js', './js/wcheck.js', './js/scenes.js', './js/bank.js',
-  './js/predict.js', './js/question.js',
+  './js/predict.js', './js/question.js', './js/config.js',
   './js/screens/home.js', './js/screens/words.js', './js/screens/wordplay.js', './js/screens/drill.js',
   './js/screens/quiz.js', './js/screens/grammar.js', './js/screens/listen.js', './js/screens/write.js',
   './js/screens/interview.js', './js/screens/exam.js', './js/screens/stats.js', './js/screens/settings.js',
