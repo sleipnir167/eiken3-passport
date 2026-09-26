@@ -1,0 +1,11 @@
+{
+  "name": "eiken3-passport",
+  "private": true,
+  "type": "module",
+  "description": "英検3級の合格をめざす学習PWA（手書きスペル判定・SRS単語帳・AI添削・AI面接）",
+  "scripts": {
+    "start": "python3 -m http.server 8766",
+    "check": "node tools/check-data.mjs",
+    "icons": "python3 tools/make-icons.py"
+  }
+}

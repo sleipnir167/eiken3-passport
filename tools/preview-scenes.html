@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>イラスト確認（開発用）</title>
+<style>
+  body { font-family: sans-serif; background: #eee; margin: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
+  .grid > div { background: #fff; padding: 8px; border-radius: 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  h3 { margin: 4px 0; font-size: 14px; }
+  p { margin: 4px 0; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>イラスト確認（開発用）</h1>
+<div class="grid" id="poses"></div>
+<h2>面接カード</h2>
+<div class="grid" id="cards"></div>
+<script type="module">
+  import * as S from '../js/scenes.js';
+  const poses = ['stand','walk','run','sit','wave','hold','read','sitread','phone','point','carry','drink','reach','cook','water','photo','guitar','throw','umbrella','walkdog'];
+  const holds = { hold: 'ball', read: 'book', sitread: 'book', phone: 'phone', carry: 'box', drink: 'cup', photo: 'camera', guitar: 'guitar', water: 'wateringcan', umbrella: 'umbrella', reach: 'chalk' };
+  const el = document.getElementById('poses');
+  for (let i = 0; i < poses.length; i += 4) {
+    const parts = poses.slice(i, i + 4).map((p, k) => {
+      const sit = ['sit', 'sitread', 'drink', 'guitar'].includes(p);
+      return (sit ? S.chair(70 + k * 115, 262, -1) : '') + S.person({ x: 60 + k * 115, y: 262, pose: p, face: 1, hold: holds[p], hair: ['short','long','pony','cap'][k], skirt: k === 1, shirt: ['#4fa3e3','#ff6f59','#2ec4a6','#8a6cf0'][k], skin: S.SKIN[k] });
+    });
+    const d = document.createElement('div');
+    d.innerHTML = `<h3>${poses.slice(i, i + 4).join(' / ')}</h3>` + S.scene('room', parts);
+    el.appendChild(d);
+  }
+  try {
+    const { CARDS } = await import('../data/interview.js');
+    const c = document.getElementById('cards');
+    for (const card of CARDS) {
+      const d = document.createElement('div');
+      d.innerHTML = `<h3>${card.title}</h3>${card.scene()}<p>${card.passage}</p><p>${card.q2.q} → ${card.q2.a}</p><p>${card.q3.q} → ${card.q3.a}</p>`;
+      c.appendChild(d);
+    }
+  } catch (e) { console.warn(e); }
+</script>
+</body>
+</html>
