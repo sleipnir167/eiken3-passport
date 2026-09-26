@@ -1,5 +1,5 @@
 // Service Worker：アプリ本体をキャッシュしてオフラインでも使えるようにする
-const VERSION = 'eiken3-passport-v2';
+const VERSION = 'eiken3-passport-v3';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './css/style.css',
   './js/app.js', './js/store.js', './js/srs.js', './js/sound.js', './js/fx.js', './js/ui.js', './js/game.js',

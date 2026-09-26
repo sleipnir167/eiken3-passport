@@ -449,6 +449,7 @@ export function renderInterviewSession(root, params) {
     actions(root, {
       'ai-grade': async (el) => {
         el.classList.add('loading');
+        toast('AIが採点しています（30秒ほどかかることがあります）', { icon: '🦉', ms: 5000 });
         try {
           const res = await chatJSON(gradeInterviewPrompt({ card, readingRatio: log.readingRatio, readingText: log.reading, answers: log.answers, name }), { maxTokens: 1400, cache: false });
           const d = res.data;

@@ -231,7 +231,7 @@ export function renderWriteEditor(root, params) {
     if (!aiReady()) { localResult(); toast('AIが未設定のため、自動チェックを表示しました（設定 → AI）', { icon: '🤖', ms: 4000 }); return; }
     btn?.classList.add('loading');
     result.hidden = false;
-    result.innerHTML = `<div class="card ai-loading">${mascot('think', 'bob')}<p>🦉 フート先生が採点しています…</p></div>`;
+    result.innerHTML = `<div class="card ai-loading">${mascot('think', 'bob')}<p>🦉 フート先生が採点しています…</p><p class="small muted">無料のAIなので、30秒ほどかかることがあります</p></div>`;
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
     try {
       const res = await chatJSON(gradeWritingPrompt({ kind, prompt: kind === 'email' ? `${p.body.replace(/\[\[(.+?)\]\]/g, '<u>$1</u>')}\n（下線部の2つの質問に答える。語数の目安 ${lo}〜${hi} 語）` : `QUESTION: ${p.q}（意見と理由2つ。語数の目安 ${lo}〜${hi} 語）`, text }), { maxTokens: 1500 });

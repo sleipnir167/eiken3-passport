@@ -60,7 +60,7 @@ async function callProvider(p, messages, { maxTokens, temperature, timeoutMs }) 
   if (isOpenRouter(p)) { headers['HTTP-Referer'] = location.origin; headers['X-Title'] = 'Eiken3 Passport'; }
   const url = `${p.baseUrl.replace(/\/+$/, '')}/chat/completions`;
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), timeoutMs || (isOpenRouter(p) || p.builtin ? 60000 : 120000));
+  const timer = setTimeout(() => ctl.abort(), timeoutMs || (p.builtin ? 90000 : isOpenRouter(p) ? 60000 : 120000));
   try {
     const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: ctl.signal });
     const data = await res.json().catch(() => ({}));

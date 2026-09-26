@@ -125,7 +125,7 @@ export function bindFeedback(root, item, shuffled, chosen) {
     }
     btn.classList.add('loading');
     out.hidden = false;
-    out.innerHTML = '<p class="ai-thinking">🦉 フート先生が考えています…</p>';
+    out.innerHTML = '<p class="ai-thinking">🦉 フート先生が考えています…（10〜20秒ほど）</p>';
     try {
       // 正解の文とまちがえた選択肢で、同じ解説は端末に保存して使い回す（2回目からは無料）
       const r = await chat(explainPrompt({ question, choices: shuffled.c, answer: shuffled.a, chosen: chosen === shuffled.a ? null : chosen, passage }), {

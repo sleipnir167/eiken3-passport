@@ -104,7 +104,7 @@ function openGenerator(onDone) {
   const weakWords = WORDS.filter((c) => status(s.items[meanKey(c)]) === 'weak').slice(0, 8).map((c) => c.w);
   const m = modal(`
     <h2>🤖 AIで問題を作る</h2>
-    <p class="small muted">英検3級の大問1形式の4択問題を作ります。1回で5問（AIの利用は1回分）。作った問題は端末に保存され、何度でも無料で解けます。</p>
+    <p class="small muted">英検3級の大問1形式の4択問題を作ります。1回で5問。作った問題は端末に保存され、何度でも解けます（作るのに1分ほどかかることがあります）。</p>
     <label class="set-row col"><span>ねらい</span>
       <select class="text-in" data-k="target">
         <option value="weak">苦手な単語から${weakWords.length ? `（${weakWords.slice(0, 4).join(', ')} など）` : '（まだ苦手な単語がありません）'}</option>

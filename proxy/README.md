@@ -16,7 +16,7 @@
 cd proxy
 npx wrangler@latest login
 npx wrangler@latest deploy
-npx wrangler@latest secret put MODELLIX_API_KEY
+npx wrangler@latest secret put MODELLIX_API_KEY --name eiken3-ai
 ```
 
 1. `login`：ブラウザが開くので Cloudflare にログインして許可する
@@ -32,8 +32,9 @@ npx wrangler@latest secret put MODELLIX_API_KEY
 | 項目 | 内容 |
 |---|---|
 | `ALLOWED_ORIGINS` | 受け付けるサイト（カンマ区切り） |
-| `ALLOWED_MODELS` | 使ってよいモデル（先頭が既定）。モデル名は Modellix の料金ページ（https://www.modellix.ai/llm）で確認 |
+| `ALLOWED_MODELS` | 使ってよいモデル（カンマ区切り・先頭から順に試す）。いまは無料の `modellix-ai/free-llm`。使えるモデル名は `https://eiken3-ai.sleipnir167.workers.dev/v1/models?all=1`（アプリのサイトから）で確認できる |
+| `RETRIES` | 失敗・中身のない返答のとき、同じモデルでやり直す回数 |
 | `MAX_TOKENS` | 1回の出力トークンの上限 |
 
-キーを変えるときは `npx wrangler@latest secret put MODELLIX_API_KEY` をもう一度実行します。
+キーを変えるときは `npx wrangler@latest secret put MODELLIX_API_KEY --name eiken3-ai` をもう一度実行します（キーの入力を求められるので、ターミナル画面に直接入力する）。
 回数制限（`[[ratelimits]]`）で deploy がエラーになる場合は、`wrangler.toml` のその部分を削除してください（Worker は制限なしでも動きます）。
