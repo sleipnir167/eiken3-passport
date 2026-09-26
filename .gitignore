@@ -4,3 +4,4 @@ node_modules/
 proxy/.wrangler/
 proxy/node_modules/
 proxy/.dev.vars
+.wrangler/
